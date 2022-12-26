@@ -1,6 +1,37 @@
-<script setup>
+<script>
 import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
+import MyOAuth from './components/MyOAuth.vue'
+import authService from './authService';
+
+export default {
+	data() {
+		return {
+			refreshToken: null,
+			accessToken: null
+		}
+	},
+
+	methods: {
+		setRefreshToken(refresh_token) {
+			this.refreshToken = refresh_token.data
+		},
+		setAccessToken(access_token) {
+			this.accessToken = access_token.data
+			console.log('setAccessToken', this.accessToken)
+		},
+	},
+	
+	components: {
+		MyOAuth,
+		HelloWorld
+	},
+
+	created() {
+		authService.setupInterceptor.bind(this)();
+	}
+}
+
+
 </script>
 
 <template>
@@ -13,7 +44,7 @@ import TheWelcome from './components/TheWelcome.vue'
   </header>
 
   <main>
-    <TheWelcome />
+    <MyOAuth :accessToken="accessToken" @gotRefreshToken="setRefreshToken" @gotAccessToken="setAccessToken"/>
   </main>
 </template>
 
